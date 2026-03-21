@@ -302,16 +302,19 @@ test('OptikLink 保活', async ({ }, testInfo) => {
         if (!page.url().includes('optiklink.net')) {
             throw new Error(`❌ 未到达 OptikLink，当前 URL: ${page.url()}`);
         }
+        
         console.log(`✅ 登录成功！当前：${page.url()}`);
 
-        // 🔹 修改动作：直接打开控制台登录页
+        // 🔹 修复：新建浏览器上下文打开控制台
         console.log('📤 直接打开控制台登录页...');
-        const panelPage = await page.context().newPage();
+        const context = await browser.newContext();
+        const panelPage = await context.newPage();
         panelPage.setDefaultTimeout(TIMEOUT);
         activePage = panelPage;
         await panelPage.goto('https://control.optiklink.net/auth/login', { waitUntil: 'domcontentloaded' });
         console.log(`✅ 已打开控制台登录页：${panelPage.url()}`);
 
+        // 后续逻辑保持不变
         console.log('✏️ 填写控制台账号密码...');
         await panelPage.fill('input[name="username"]', panelUser);
         await panelPage.fill('input[name="password"]', panelPass);
